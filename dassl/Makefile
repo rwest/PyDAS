@@ -6,7 +6,7 @@
 
 F77=gfortran
 
-CFLAGS=-fPIC
+CFLAGS=-fPIC -O3
 
 OBJ=daux.o ddassl.o dlinpk.o
 
