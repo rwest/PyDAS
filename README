@@ -1,0 +1,10 @@
+PyDAS - A Python wrapper for the DASSL, DASPK, and DASKR differential algebraic system solvers
+
+To build it:
+    cd dassl
+    make
+    cd ..
+    python setup.py build_ext --inplace
+
+To test it:
+    python dasslTest.py
