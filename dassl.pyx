@@ -163,7 +163,7 @@ cdef class DASSL:
 		
 		# Determine the number of equations
 		neq = len(y0)
-		if dydt0 and len(dydt0) != neq:
+		if dydt0 is not None and len(dydt0) != neq:
 			raise DASSLError('Expected %i values of dydt0, got %i.' % (neq, len(dydt0)))
 		
 		# Initialize all DASSL options to default values (i.e. all zeros)
@@ -247,7 +247,7 @@ cdef class DASSL:
 			self.info[9] = 0
 				
 		# If no initial derivatives provided, tell DASSL to attempt to guess them
-		if not dydt0:
+		if dydt0 is None:
 			self.info[10] = 1
 		else:
 			self.info[10] = 0
@@ -276,7 +276,7 @@ cdef class DASSL:
 		for i in range(neq):
 			self.y[i] = y0[i]
 		self.dydt = np.zeros(neq, np.float64)
-		if dydt0:
+		if dydt0 is not None:
 			for i in range(neq):
 				self.dydt[i] = dydt0[i]
 	
