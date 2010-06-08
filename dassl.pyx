@@ -323,7 +323,7 @@ cdef class DASSL:
 		
 		
 		# Call DASSL
-		self.idid = ddassl_(
+		ddassl_(
 			res,
 			&(neq),
 			&(self.t),
@@ -342,6 +342,7 @@ cdef class DASSL:
 			<int*> self.ipar.data,
 			jac
 		)
+		return self.idid
 		
 	@cython.boundscheck(False)
 	def residual(self, double t, np.ndarray[np.float64_t,ndim=1] y, np.ndarray[np.float64_t,ndim=1] dydt):
