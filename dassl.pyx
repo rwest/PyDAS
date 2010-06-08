@@ -342,6 +342,32 @@ cdef class DASSL:
 			<int*> self.ipar.data,
 			jac
 		)
+		while self.idid == -1:
+			# DID = -1, The code has taken about 500 steps.
+			# If you want to continue, set INFO(1) = 1 and
+			# call the code again. An additional 500 steps
+			# will be allowed.
+			print('Attempting an additional 500 steps')
+			self.info[0] = 1
+			ddassl_(
+				res,
+				&(neq),
+				&(self.t),
+				<np.float64_t*> self.y.data,
+				<np.float64_t*> self.dydt.data,
+				&(tout),
+				<int*> self.info.data,
+				<np.float64_t*> self.rtol.data,
+				<np.float64_t*> self.atol.data,
+				&(self.idid),
+				<np.float64_t*> self.rwork.data,
+				&(lrw),
+				<int*> self.iwork.data,
+				&(liw),
+				<np.float64_t*> self.rpar.data,
+				<int*> self.ipar.data,
+				jac
+			)
 		return self.idid
 		
 	@cython.boundscheck(False)
