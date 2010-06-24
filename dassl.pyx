@@ -342,49 +342,45 @@ cdef class DASSL:
 			<int*> self.ipar.data,
 			jac
 		)
-		if self.idid == -6:
-			"""
-			Repeated error test failures occurred on the
-			   last attempted step in DDASSL. A singularity in the
-			   solution may be present. If you are absolutely
-			   certain you want to continue, you should restart
-			   the integration. (Provide initial values of Y and
-			   YPRIME which are consistent)
-			"""
-			print('Trying once more with 1000x higher error tolerances')
-			self.info[0] = 1
-			self.rtol *= 1000 # remember to update the division lines
-			self.atol *= 1000 # which are about 20 lines below here
-			ddassl_(
-				res,
-				&(neq),
-				&(self.t),
-				<np.float64_t*> self.y.data,
-				<np.float64_t*> self.dydt.data,
-				&(tout),
-				<int*> self.info.data,
-				<np.float64_t*> self.rtol.data,
-				<np.float64_t*> self.atol.data,
-				&(self.idid),
-				<np.float64_t*> self.rwork.data,
-				&(lrw),
-				<int*> self.iwork.data,
-				&(liw),
-				<np.float64_t*> self.rpar.data,
-				<int*> self.ipar.data,
-				jac
-			)
-			print("Restoring error tolerances")
-			self.rtol /= 1000 # remember to update the multiplication lines
-			self.atol /= 1000 # which are about 20 lines above here
 			
-		while self.idid == -1:
-			# DID = -1, The code has taken about 500 steps.
-			# If you want to continue, set INFO(1) = 1 and
-			# call the code again. An additional 500 steps
-			# will be allowed.
-			print('Attempting an additional 500 steps')
-			self.info[0] = 1
+		while self.idid in ( -1 , -6, -7 ):
+			tolerance_factors = (1, 1)
+			if self.idid == -1:
+				"""
+				IDID = -1, The code has taken about 500 steps.
+				              If you want to continue, set INFO(1) = 1 and
+				              call the code again. An additional 500 steps
+				              will be allowed.
+				"""
+				print('Attempting an additional 500 steps')
+				self.info[0] = 1
+			
+			if self.idid == -6 :
+				"""
+				IDID = -6, Repeated error test failures occurred on the
+				              last attempted step in DDASSL. A singularity in the
+				              solution may be present. If you are absolutely
+				              certain you want to continue, you should restart
+				              the integration. (Provide initial values of Y and
+				              YPRIME which are consistent)
+				"""
+				print('Trying once more with 1000x higher error tolerances')
+				tolerance_factors = (1000, 1000)
+				self.info[0] = 1
+			
+			if self.idid == -7 :
+				"""IDID = -7, Repeated convergence test failures occurred
+				              on the last attempted step in DDASSL. An inaccurate
+				              or ill-conditioned JACOBIAN may be the problem. If
+				              you are absolutely certain you want to continue, you
+				              should restart the integration.
+				"""
+				print('Trying once more with 1000x higher error tolerances')
+				tolerance_factors = (1000, 1000)
+				self.info[0] = 1
+				
+			self.rtol *= tolerance_factors[0] # remember to update the division lines
+			self.atol *= tolerance_factors[1] # which are about 20 lines below here
 			ddassl_(
 				res,
 				&(neq),
@@ -404,6 +400,11 @@ cdef class DASSL:
 				<int*> self.ipar.data,
 				jac
 			)
+			
+			if tolerance_factors != (1,1):
+				print("Restoring error tolerances")
+			self.rtol /= tolerance_factors[0] # remember to update the multiplication lines
+			self.atol /= tolerance_factors[1] # which are about 20 lines above here
 		return self.idid
 		
 	@cython.boundscheck(False)
