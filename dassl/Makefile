@@ -18,7 +18,7 @@ dassl: $(OBJ)
 	ar rcs $(LIB) $(OBJ)
 
 %.o: %.f
-	$(F77) $(CFLAGS) -c $< -o $@
+	$(F77) $(FFLAGS) $(CFLAGS) -c $< -o $@
 	
 clean:
 	rm $(LIB) $(OBJ)

@@ -3,6 +3,7 @@ PyDAS - A Python wrapper for the DASSL, DASPK, and DASKR differential algebraic 
 To build it:
     cd dassl
     make
+(or if you prefer, something like:  FFLAGS="-arch x86_64" make )
     cd ..
     python setup.py build_ext --inplace
 
