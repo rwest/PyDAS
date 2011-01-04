@@ -7,7 +7,7 @@ if __name__ == '__main__':
 	from distutils.extension import Extension
 	from Cython.Distutils import build_ext
 	
-	import Cython.Compiler
+	import Cython.Compiler.Options
 	Cython.Compiler.Options.annotate = True
 	
 	import numpy
