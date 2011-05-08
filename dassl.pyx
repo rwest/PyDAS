@@ -337,7 +337,7 @@ cdef class DASSL:
 				              you are absolutely certain you want to continue, you
 				              should restart the integration.
 				"""
-				if tolerance_factors[0]>1e7:
+				if tolerance_factors[0]>1e3:
 					print("Still failed, and tolerance too high. Giving up.")
 					break
 				print('Trying once more with 100x higher error tolerances')
